@@ -21,7 +21,7 @@
     text-align: center;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: 40px 1fr;
+    grid-template-rows: 5vh 1fr;
     height: 90vh;
     grid-gap: 3px;
     
@@ -39,4 +39,50 @@
     grid-column: 1 / -1;
     grid-row: 2 / -1;
     font-size: 50px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+}
+
+.display{
+    background-color: lightblue;
+    margin: 30px;
+    border-radius: 30px;
+    border: solid 5px black;
+}
+.bolla {
+    background-color: lightblue;
+    margin:30px;
+    border-radius: 30px;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr;
+}
+.inserisci-bolla{
+    border-top-right-radius: 30px;
+    border-top-left-radius: 30px;
+    border: solid 5px black;
+}
+.stats {
+    border-bottom-right-radius: 30px;
+    border-bottom-left-radius: 30px;
+    border: solid 5px black;
+}
+.gestione-clienti{
+    background-color: lightblue;
+    margin:30px;
+    border-radius: 30px;
+    display: grid;
+    grid-template-rows: 0.1fr 1fr;
+}
+.clienti {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+.ass, .modify, .remove, .display-clienti {
+    border: solid 5px black;
+}
+
+.display-clienti{
+    grid-column: 1 / -1;
 }

@@ -1,0 +1,17 @@
+.header {
+    text-align: center;
+    font-size: 32px;
+}
+
+.menu {
+    text-align: center;
+    color: white;
+    background-color: rgb(68, 100, 189);
+    font-size: 32px;
+}
+.container {
+    background-color: lightcoral;
+    font-size: 50px;
+    color: white;
+    text-align: center;
+}

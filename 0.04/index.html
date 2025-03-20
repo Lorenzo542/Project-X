@@ -20,13 +20,17 @@
             
             <div class="control-group">
                 <label for="inputCodice">Codice:</label>
-                <input type="text" id="inputCodice" placeholder="Inizia a digitare..." autocomplete="off">
+                <input type="number" id="inputCodice" placeholder="Inizia a digitare..." autocomplete="off">
                 <button id="submit">Elimina</button>
             </div>
             
             <div class="control-group">
                 <label for="fileInput">Importa codici da CSV:</label>
-                <input type="file" id="fileInput" accept=".csv">
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept=".csv,.txt,text/csv,application/csv" style="display:none;">
+                    <button type="button" onclick="gestisciImportazione()" class="file-button">Seleziona file</button>
+                    <span id="fileNameDisplay">Nessun file selezionato</span>
+                </div>
             </div>
             
             <div class="actions">

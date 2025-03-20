@@ -63,7 +63,7 @@ label {
     font-weight: 600;
 }
 
-input[type="text"],
+input[type="number"],
 select {
     width: 100%;
     padding: 10px;
@@ -247,5 +247,102 @@ footer {
     
     .actions {
         flex-direction: column;
+    }
+}
+/* Add these styles to your existing CSS file */
+
+/* Mobile-specific adjustments */
+@media (max-width: 600px) {
+    /* Default state */
+    .controls {
+        transition: all 0.3s ease;
+    }
+    
+    /* Minimized state when input is focused */
+    .controls.minimized {
+        padding: 5px;
+        margin-bottom: 5px;
+    }
+    
+    /* Hide non-essential elements when minimized */
+    .controls.minimized .control-group:not(:nth-child(2)),
+    .controls.minimized .actions {
+        display: none;
+    }
+    
+    /* Keep only the input field visible but compact */
+    .controls.minimized .control-group:nth-child(2) {
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .controls.minimized .control-group:nth-child(2) label {
+        margin-bottom: 0;
+        margin-right: 10px;
+        font-size: 14px;
+    }
+    
+    .controls.minimized #inputCodice {
+        flex: 1;
+        padding: 8px;
+    }
+    
+    .controls.minimized #submit {
+        margin-top: 0;
+        margin-left: 5px;
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    /* Make results more prominent when input is focused */
+    .results-expanded {
+        margin-top: 10px;
+    }
+    
+    .results-expanded .codice-lista {
+        max-height: 60vh; /* Increase visible area */
+    }
+}
+/* Stili per il pulsante di importazione file */
+.file-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+.file-button:hover {
+    background-color: var(--primary-dark);
+}
+
+#fileNameDisplay {
+    font-size: 14px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+/* Stile responsivo */
+@media (max-width: 600px) {
+    .file-input-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    #fileNameDisplay {
+        margin-top: 5px;
     }
 }

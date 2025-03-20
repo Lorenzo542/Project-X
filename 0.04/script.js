@@ -98,37 +98,61 @@ Procedi solo se hai una copia di backup.`)) {
 }
 
 // Esporta dati in CSV
+// Funzione di esportazione migliorata
 function esportaDati() {
-    // Prepara i dati
-    let csvContent = "data:text/csv;charset=utf-8,";
+    // Verifica se ci sono dati da esportare
+    if (codiciAttivi.length === 0 && codiciEliminati.length === 0) {
+        mostraMessaggio("Non ci sono dati da esportare", "info");
+        return;
+    }
     
-    // Aggiungi intestazioni
-    csvContent += "Codice,Stato\n";
-    
-    // Aggiungi codici attivi
-    codiciAttivi.forEach(codice => {
-        csvContent += `${codice},Attivo\n`;
-    });
-    
-    // Aggiungi codici eliminati
-    codiciEliminati.forEach(codice => {
-        csvContent += `${codice},Eliminato\n`;
-    });
-    
-    // Crea elemento di download
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `codici_bolla_settimana_${settimanaSelezionata}.csv`);
-    document.body.appendChild(link);
-    
-    // Download
-    link.click();
-    
-    // Rimuovi il link
-    document.body.removeChild(link);
-    
-    mostraMessaggio("Dati esportati correttamente", "successo");
+    try {
+        // Prepara i dati per il CSV
+        let csvRows = [];
+        
+        // Aggiungi intestazioni
+        csvRows.push("Codice,Stato");
+        
+        // Aggiungi codici attivi
+        codiciAttivi.forEach(codice => {
+            csvRows.push(`${codice},Attivo`);
+        });
+        
+        // Aggiungi codici eliminati
+        codiciEliminati.forEach(codice => {
+            csvRows.push(`${codice},Eliminato`);
+        });
+        
+        // Converti l'array in una stringa CSV
+        const csvString = csvRows.join('\n');
+        
+        // Crea un Blob con i dati CSV
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        
+        // Crea URL per il download
+        const url = URL.createObjectURL(blob);
+        
+        // Crea e configura l'elemento per il download
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `codici_bolla_settimana_${settimanaSelezionata}.csv`);
+        link.style.visibility = 'hidden';
+        
+        // Aggiungi al DOM, avvia il download e rimuovi
+        document.body.appendChild(link);
+        link.click();
+        
+        // Pulizia
+        setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }, 300);
+        
+        mostraMessaggio("Dati esportati correttamente", "successo");
+    } catch (error) {
+        console.error("Errore nell'esportazione:", error);
+        mostraMessaggio("Errore durante l'esportazione: " + error.message, "errore");
+    }
 }
 
 // Popola il selettore delle settimane
@@ -138,7 +162,7 @@ function popolaSettimaneSelect() {
     const anno = oggi.getFullYear();
     
     // Mostra le ultime 10 settimane e le prossime 2
-    for (let i = settimanaCorrente - 10; i <= settimanaCorrente + 2; i++) {
+    for (let i = settimanaCorrente - 10; i <= settimanaCorrente + 52; i++) {
         if (i > 0 && i <= 52) {
             const option = document.createElement("option");
             option.value = i;
@@ -317,3 +341,141 @@ Date.prototype.getWeekNumber = function() {
     const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
     return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 };
+
+// Add this code to your existing script.js file
+
+// Mobile focus handling
+function setupMobileFocusBehavior() {
+    // Only apply these changes on mobile devices
+    if (window.innerWidth <= 600) {
+        const controlsSection = document.querySelector('.controls');
+        const resultsSection = document.querySelector('.results');
+        
+        // When input is focused
+        inputCodice.addEventListener('focus', function() {
+            controlsSection.classList.add('minimized');
+            resultsSection.classList.add('results-expanded');
+            
+            // Scroll to make sure input and results are visible
+            setTimeout(() => {
+                window.scrollTo({
+                    top: inputCodice.getBoundingClientRect().top + window.scrollY - 20,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        });
+        
+        // When input loses focus
+        inputCodice.addEventListener('blur', function() {
+            // Small delay to allow for clicking on results
+            setTimeout(() => {
+                // Check if the focus was moved to an element in the results
+                const activeElement = document.activeElement;
+                if (!resultsSection.contains(activeElement)) {
+                    controlsSection.classList.remove('minimized');
+                    resultsSection.classList.remove('results-expanded');
+                }
+            }, 200);
+        });
+        
+        // Make sure results stay visible when interacting with them
+        codiceLista.addEventListener('touchstart', function() {
+            controlsSection.classList.add('minimized');
+            resultsSection.classList.add('results-expanded');
+        });
+    }
+}
+
+// Add this to your existing initialization code
+document.addEventListener("DOMContentLoaded", function() {
+    // Your existing initialization code
+    // ...
+    
+    // Add mobile focus behavior
+    setupMobileFocusBehavior();
+    
+    // Handle window resize to apply/remove mobile behavior
+    window.addEventListener('resize', function() {
+        setupMobileFocusBehavior();
+    });
+});
+
+// Modifica la gestione dell'input file per supportare meglio i dispositivi mobili
+
+// 1. Aggiorna l'elemento HTML nel tuo file HTML
+// Cambia la riga:
+// <input type="file" id="fileInput" accept=".csv">
+// Con:
+// <input type="file" id="fileInput" accept=".csv,.txt,text/csv,application/csv">
+
+// 2. Aggiungi questa funzione al tuo JavaScript per gestire meglio l'importazione
+function gestisciImportazione() {
+    // Avviso per dispositivi mobili
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        alert("Suggerimento: Se non riesci a selezionare file CSV, prova a utilizzare un'app di file manager o un'app di fogli di calcolo per aprire/condividere il file CSV con questa pagina.");
+    }
+    
+    // Attiva la selezione del file
+    fileInput.click();
+}
+
+// 3. Modifica l'evento di input per CSV per accettare più tipi di file
+function importaCSV(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Verifica il tipo di file con controlli più permissivi
+    const isCSV = 
+        file.type === 'text/csv' || 
+        file.type === 'application/csv' ||
+        file.type === 'text/plain' ||
+        file.name.endsWith('.csv') || 
+        file.name.endsWith('.txt');
+    
+    if (!isCSV) {
+        mostraMessaggio("Seleziona un file CSV valido (o .txt con valori separati da virgole)", "errore");
+        fileInput.value = "";
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const contenuto = e.target.result;
+            const righe = contenuto.split(/\r?\n/);
+            let codiciImportati = 0;
+            
+            righe.forEach(riga => {
+                // Gestisci anche file senza intestazioni o con formati diversi
+                const campi = riga.split(',');
+                const codice = campi[0].trim();
+                
+                // Ignora righe vuote o intestazioni
+                if (codice && 
+                    codice !== "Codice" && 
+                    !isNaN(codice) &&
+                    !codiciAttivi.includes(codice) && 
+                    !codiciEliminati.includes(codice)) {
+                    codiciAttivi.push(codice);
+                    codiciImportati++;
+                }
+            });
+            
+            if (codiciImportati > 0) {
+                salvaDati();
+                mostraRisultati(filtraCodici(inputCodice.value));
+                mostraMessaggio(`Importati ${codiciImportati} nuovi codici`, "successo");
+            } else {
+                mostraMessaggio("Nessun nuovo codice valido trovato nel file", "info");
+            }
+        } catch (error) {
+            console.error("Errore importazione:", error);
+            mostraMessaggio("Errore durante l'importazione: " + error.message, "errore");
+        }
+        
+        // Reset dell'input file
+        fileInput.value = "";
+    };
+    
+    reader.readAsText(file);
+}
